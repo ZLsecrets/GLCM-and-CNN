@@ -7,37 +7,37 @@ b = linspace(1, 100, 5);
 acc = [];
 for i = 1:length(a)
     for j = 1:length(b)
-        load resnet50_modi_image; %¼ÓÔØÔÚImageNetÉÏÔ¤ÑµÁ·µÄÍøÂçÄ£ĞÍ
-        imageInputSize = [224 224 3];%%Êı¾İÎ¬¶È
-        %¼ÓÔØÍ¼Ïñ
+        load resnet50_modi_image; %åŠ è½½åœ¨ImageNetä¸Šé¢„è®­ç»ƒçš„ç½‘ç»œæ¨¡å‹
+        imageInputSize = [224 224 3];%%æ•°æ®ç»´åº¦
+        %åŠ è½½å›¾åƒ
         allImages = imageDatastore("Your Location", ...
             'IncludeSubfolders',true,...
             'LabelSource','foldernames');
-        [training_set,validation_set] = splitEachLabel(allImages,0.3,'randomized');    %»®·ÖÑµÁ·¼¯30%ºÍÑéÖ¤¼¯70%
+        [training_set,validation_set] = splitEachLabel(allImages,0.3,'randomized');    %åˆ’åˆ†è®­ç»ƒé›†30%å’ŒéªŒè¯é›†70%
 
         augmented_training_set = augmentedImageSource(imageInputSize,training_set);
         augmented_validation_set = augmentedImageSource(imageInputSize,validation_set);
 
-        opts = trainingOptions('adam', ...%%×ÔÊÊÓ¦¶¯Á¿µÄËæ»úÓÅ»¯·½·¨
-            'MiniBatchSize', 32,... % mini batch size, Åú³éÑù¸öÊı
-            'InitialLearnRate', 0.005,... % fixed learning rate  Ñ§Ï°ÂÊ
-            'LearnRateSchedule','piecewise',...%%²ÉÓÃÑ§Ï°ÂÊÏÂ½µµÄ·½Ê½
-            'LearnRateDropFactor',0.25,...%%²ÉÓÃÑ§Ï°ÂÊÏÂ½µµÄ0.25
-            'LearnRateDropPeriod',5,...%%Ñ§Ï°ÂÊÏÂ½µ´ÓµÚ5´Îµü´úÏÂ½µ
-            'L2Regularization', 1e-4,... constraint%% ÕıÔò»¯²ÎÊı
-            'MaxEpochs',10,...%%%×î´óµü´ú´ÎÊı
-            'ExecutionEnvironment', 'gpu',...%%²ÉÓÃCPUÑµÁ·
-            'ValidationData', augmented_validation_set,...%%ÑéÖ¤¼¯£¨²âÊÔ¼¯£©
-            'ValidationFrequency',80,...%ÑéÖ¤´ÎÊı
+        opts = trainingOptions('adam', ...%%è‡ªé€‚åº”åŠ¨é‡çš„éšæœºä¼˜åŒ–æ–¹æ³•
+            'MiniBatchSize', round(b),... % mini batch size, æ‰¹æŠ½æ ·ä¸ªæ•°
+            'InitialLearnRate', a,... % fixed learning rate  å­¦ä¹ ç‡
+            'LearnRateSchedule','piecewise',...%%é‡‡ç”¨å­¦ä¹ ç‡ä¸‹é™çš„æ–¹å¼
+            'LearnRateDropFactor',0.25,...%%é‡‡ç”¨å­¦ä¹ ç‡ä¸‹é™çš„0.25
+            'LearnRateDropPeriod',5,...%%å­¦ä¹ ç‡ä¸‹é™ä»ç¬¬5æ¬¡è¿­ä»£ä¸‹é™
+            'L2Regularization', 1e-4,... constraint%% æ­£åˆ™åŒ–å‚æ•°
+            'MaxEpochs',10,...%%%æœ€å¤§è¿­ä»£æ¬¡æ•°
+            'ExecutionEnvironment', 'gpu',...%%é‡‡ç”¨CPUè®­ç»ƒ
+            'ValidationData', augmented_validation_set,...%%éªŒè¯é›†ï¼ˆæµ‹è¯•é›†ï¼‰
+            'ValidationFrequency',80,...%éªŒè¯æ¬¡æ•°
             'ValidationPatience',8, ...
-            'Plot','training-progress');%%ÏÔÊ¾ÑµÁ·¹ı³Ì
+            'Plot','training-progress');%%æ˜¾ç¤ºè®­ç»ƒè¿‡ç¨‹
 
-        net = trainNetwork(augmented_training_set, trainedNetwork_1.layerGraph, opts);%%ÑµÁ·ÍøÂç
+        net = trainNetwork(augmented_training_set, trainedNetwork_1.layerGraph, opts);%%è®­ç»ƒç½‘ç»œ
 
-        [predLabels,predScores] = classify(net, augmented_validation_set);%%¶Ô²âÊÔÊı¾İ½øĞĞ·ÖÀà
-        plotconfusion(validation_set.Labels, predLabels)%%% »ìÏı¾ØÕó»­Í¼
-        PerItemAccuracy = mean(predLabels == validation_set.Labels);%¼ÆËãÕıÈ·ÂÊ
-        title(['overall per image accuracy ',num2str(round(100*PerItemAccuracy)),'%'])%ÏÔÊ¾ÕıÈ·ÂÊ
+        [predLabels,predScores] = classify(net, augmented_validation_set);%%å¯¹æµ‹è¯•æ•°æ®è¿›è¡Œåˆ†ç±»
+        plotconfusion(validation_set.Labels, predLabels)%%% æ··æ·†çŸ©é˜µç”»å›¾
+        PerItemAccuracy = mean(predLabels == validation_set.Labels);%è®¡ç®—æ­£ç¡®ç‡
+        title(['overall per image accuracy ',num2str(round(100*PerItemAccuracy)),'%'])%æ˜¾ç¤ºæ­£ç¡®ç‡
         o = 1 - PerItemAccuracy;
         temp = 1 - o;
         acc = [temp, PerItemAccuracy];
