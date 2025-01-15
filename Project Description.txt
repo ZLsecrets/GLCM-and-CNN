@@ -1,0 +1,48 @@
+Project Description:
+
+1. This study is for scientific research. At the request of the collaborating institutions in our research, the raw data should remain closed-source, and only the GLCM grayscale images derived from the raw data should be uploaded.
+
+2. Attachment Description:
+   The attachments include the following files:
+   - ’resnet18_ori’: Unmodified ResNet18 used to train the original dataset.
+   - ’resnet18_modified1’: Modified ResNet18 used to train the original dataset.
+   - ’resnet18_modi_image’: Modified ResNet18 used to train the GLCM grayscale image dataset.
+   - ’resnet50’: Unmodified ResNet50 used to train the original dataset.
+   - ’resnet50_modi_image’: Unmodified ResNet50 used to train the GLCM grayscale image dataset.
+   - ’resnet18_ori_image’: Unmodified ResNet18 used to train the GLCM grayscale image dataset.
+
+   The attachment also includes a folder named 'data', which contains the GLCM grayscale image dataset used in this study. Within the ‘data’ folder, there are four subfolders:
+   - ’DealedData_0_ang‘: Texture information matrix from the 0° angle.
+   - ’DealedData_45_ang’: Texture information matrix from the 45° angle.
+   - ’DealedData_90_ang’: Texture information matrix from the 90° angle.
+   - ’DealedData_135_ang’: Texture information matrix from the 135° angle.
+
+   These four subfolders contain five additional subfolders named:
+   - ‘level1’
+   - ‘level2’
+   - ‘level3’
+   - ‘level4’
+   - ‘level5’
+
+   These represent the five levels of images used for constructing the classification model's training samples. In transfer learning, you can use texture information images from any of these four directions for training.
+
+3. Explanation of Transfer Learning Code:
+   On line 10, the filenames for the six frameworks mentioned above are listed, such as: 'resnet18_modified1'.
+
+   To protect the author's privacy, the first variable in the `imageDatastore` function on line 13 is replaced with "Your Location," and does not refer to any specific address:
+  
+	allImages = imageDatastore("Your Location", ...
+               'IncludeSubfolders', true, ...
+               'LabelSource', 'foldernames');
+
+   The first variable should be the dataset's location on your computer. You need to download the GLCM grayscale image dataset included in this project. When using the GLCM grayscale image dataset, replace "Your Location" with the path where you downloaded the dataset. For example, if you downloaded the dataset to `C:\Desktop\Data\Processed Data\DealedData_135_ang`, replace "Your Location" with this path:
+   
+	allImages = imageDatastore("C:\Desktop\Data\Processed Data\DealedData_135_ang", ...
+               'IncludeSubfolders', true, ...
+               'LabelSource', 'foldernames');
+
+4. Explanation of GLCM Code:
+   The GLCM script calculates the Gray Level Co-occurrence Matrix for the raw data and converts the GLCM grayscale images into RGB images of size 224x224x3.
+   To protect the author's privacy, the input and output folders in lines 7 and 8 are replaced with "Your Folder."
+   'numLevel' represents the number of classes. For example, in a 4-class study, 'numLevel = 4'.
+   'imageNum' represents how many images are in each class. For example, in a 4-class study with 50 images per class, 'imageNum = 50'.
